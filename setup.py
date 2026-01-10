@@ -25,8 +25,8 @@ else:
     libname = None
 
 if libname and os.path.isdir('_soundfile_data'):
-    packages = ['_soundfile_data']
-    package_data = {'_soundfile_data': [libname, 'COPYING']}
+    packages = ['_soundfile_data', 'licensing']
+    package_data = {'_soundfile_data': [libname, 'COPYING'], 'licensing': ['license_notes.md']}
     zip_safe = False
 else:
     packages = None
