@@ -261,6 +261,25 @@ and `bitrate_mode` is 'VARIABLE', 'CONSTANT', or 'AVERAGE'.
     # minimum mp3 compression results in 3.5 Mb file
     sf.write('min_compression_vbr.mp3', data, samplerate, bitrate_mode='VARIABLE', compression_level=0)
 
+Thread Safety
+-------------
+
+The ``soundfile`` module is a thin wrapper around the low-level ``libsndfile`` C
+library. As such, ``soundfile`` provides the same thread safety guarantees as
+the underlying C library. See `this libsndfile issue
+<https://github.com/libsndfile/libsndfile/issues/279>`_ for more details.
+
+In short, multithreaded use is safe as long as handles for readers or writers
+are not shared between threads. It is safe to concurrently open and read the
+same file through unique per-thread handles. It is not safe to concurrently
+write to the same file or share reader or writer handles. You may see garbage
+results or crashes if you do this.
+
+See the advice in the Free-threaded Python guide on `thread-safe Python
+programming
+<https://py-free-threading.github.io/porting/#multithreaded-python-programming>`_
+for suggestions on how to synchronize access to a thread-unsafe object.
+
 Known Issues
 ------------
 
