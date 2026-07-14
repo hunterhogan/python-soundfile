@@ -66,7 +66,7 @@ library libsndfile.
 
 In a modern Python, you can use ``pip install soundfile`` to download
 and install the latest release of the ``soundfile`` module and its
-dependencies. On Windows (64/32/ARM64) and OS X (Intel/ARM) and Linux (64,AARCH64)
+dependencies. On Windows (64/32/ARM64) and OS X (Intel/ARM) and Linux (64/AARCH64)
 this will also install a current version of the library libsndfile. If
 you install the source module, you need to install libsndfile using
 your distribution's package manager, for example ``sudo apt install
