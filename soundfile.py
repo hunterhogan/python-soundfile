@@ -161,7 +161,7 @@ _default_subtypes: Final[dict[str, str]] = {
     'MP3':   'MPEG_LAYER_III',
 }
 
-_ffi_types: Final[dict[str, str]] = {
+_ffi_types: Final[dict[dtype_str, str]] = {
     'float64': 'double',
     'float32': 'float',
     'int32': 'int',
@@ -1553,14 +1553,14 @@ class SoundFile:
             shape = (frames,)
         return np.empty(shape, dtype, order='C')
 
-    def _check_dtype(self, dtype):
+    def _check_dtype(self, dtype) -> str:
         """Check if dtype string is valid and return ctype string."""
         try:
             return _ffi_types[dtype]
         except KeyError:
             raise ValueError(f"dtype must be one of {sorted(_ffi_types.keys())!r} and not {dtype!r}")
 
-    def _array_io(self, action, array, frames):
+    def _array_io(self, action, array: AudioData[Any], frames: int):
         """Check array and call low-level IO function."""
         if array.ndim not in (1,2):
             raise ValueError(f"Invalid shape: {array.shape!r} ({'0 dimensions not supported' if array.ndim < 1 else 'too many dimensions'})")
