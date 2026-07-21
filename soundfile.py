@@ -31,12 +31,8 @@ dtype_str: TypeAlias = Literal['float32', 'float64', 'int16', 'int32']
 _dtype: TypeAlias = float32 | float64 | int16 | int32
 _dtypeT = TypeVar('_dtypeT', float32, float64, int16, int32, _dtype, default=float64)
 
-_NDArray: TypeAlias = ndarray[tuple[Any, ...], np.dtype[_dtypeT]]
-
-AudioData: TypeAlias = _NDArray[_dtype]
+AudioData: TypeAlias = ndarray[tuple[Any, ...], np.dtype[_dtypeT]]
 AudioData_2d: TypeAlias = ndarray[tuple[int, int], np.dtype[_dtypeT]]
-
-_ndarrayT = TypeVar('_ndarrayT', bound=np.ndarray)
 
 _snd: Any
 _ffi: Any
@@ -244,7 +240,7 @@ if __libsndfile_version__.startswith('libsndfile-'):
 @overload
 def read(file: FileDescriptorOrPath, frames: int = -1, start: int = 0, stop: int | None = None,
         dtype: dtype_str = 'float64', always_2d: bool = False, fill_value: float | None = None,
-        *, out: _ndarrayT, **kwargs: Unpack[_kwargs_read_blocks]) -> tuple[_ndarrayT, int]: ...
+        *, out: AudioData[_dtypeT], **kwargs: Unpack[_kwargs_read_blocks]) -> tuple[AudioData[_dtypeT], int]: ...
 @overload
 def read(file: FileDescriptorOrPath, frames: int = -1, start: int = 0, stop: int | None = None,
         *, dtype: Literal['float32'], always_2d: Literal[True], fill_value: float | None = None, out: None = None,
@@ -252,7 +248,7 @@ def read(file: FileDescriptorOrPath, frames: int = -1, start: int = 0, stop: int
 @overload
 def read(file: FileDescriptorOrPath, frames: int = -1, start: int = 0, stop: int | None = None,
         *, dtype: Literal['float32'], always_2d: bool = False, fill_value: float | None = None, out: None = None,
-        **kwargs: Unpack[_kwargs_read_blocks]) -> tuple[_NDArray[float32], int]: ...
+        **kwargs: Unpack[_kwargs_read_blocks]) -> tuple[AudioData[float32], int]: ...
 @overload
 def read(file: FileDescriptorOrPath, frames: int = -1, start: int = 0, stop: int | None = None,
         dtype: Literal['float64'] = 'float64', *, always_2d: Literal[True], fill_value: float | None = None, out: None = None,
@@ -261,7 +257,7 @@ def read(file: FileDescriptorOrPath, frames: int = -1, start: int = 0, stop: int
 def read(file: FileDescriptorOrPath, frames: int = -1, start: int = 0, stop: int | None = None,
         dtype: Literal['float64'] = 'float64', always_2d: bool = False, fill_value: float | None = None, out: None = None,
         samplerate: int | None = None, channels: int | None = None, format: str | None = None, subtype: str | None = None,
-        endian: str | None = None, closefd: bool = True) -> tuple[_NDArray[float64], int]: ...
+        endian: str | None = None, closefd: bool = True) -> tuple[AudioData[float64], int]: ...
 @overload
 def read(file: FileDescriptorOrPath, frames: int = -1, start: int = 0, stop: int | None = None,
         *, dtype: Literal['int16'], always_2d: Literal[True], fill_value: float | None = None, out: None = None,
@@ -269,7 +265,7 @@ def read(file: FileDescriptorOrPath, frames: int = -1, start: int = 0, stop: int
 @overload
 def read(file: FileDescriptorOrPath, frames: int = -1, start: int = 0, stop: int | None = None,
         *, dtype: Literal['int16'], always_2d: bool = False, fill_value: float | None = None, out: None = None,
-        **kwargs: Unpack[_kwargs_read_blocks]) -> tuple[_NDArray[int16], int]: ...
+        **kwargs: Unpack[_kwargs_read_blocks]) -> tuple[AudioData[int16], int]: ...
 @overload
 def read(file: FileDescriptorOrPath, frames: int = -1, start: int = 0, stop: int | None = None,
         *, dtype: Literal['int32'], always_2d: Literal[True], fill_value: float | None = None, out: None = None,
@@ -277,11 +273,11 @@ def read(file: FileDescriptorOrPath, frames: int = -1, start: int = 0, stop: int
 @overload
 def read(file: FileDescriptorOrPath, frames: int = -1, start: int = 0, stop: int | None = None,
         *, dtype: Literal['int32'], always_2d: bool = False, fill_value: float | None = None, out: None = None,
-        **kwargs: Unpack[_kwargs_read_blocks]) -> tuple[_NDArray[int32], int]: ...
+        **kwargs: Unpack[_kwargs_read_blocks]) -> tuple[AudioData[int32], int]: ...
 def read(file: FileDescriptorOrPath, frames: int = -1, start: int = 0, stop: int | None = None, dtype: dtype_str = 'float64',
-        always_2d: bool = False, fill_value: float | None = None, out: _ndarrayT | None = None,
+        always_2d: bool = False, fill_value: float | None = None, out: AudioData[Any] | None = None,
         samplerate: int | None = None, channels: int | None = None, format: str | None = None, subtype: str | None = None,
-        endian: str | None = None, closefd: bool = True) -> tuple[AudioData | AudioData_2d | _ndarrayT, int]:
+        endian: str | None = None, closefd: bool = True) -> tuple[AudioData[Any], int]:
     """Provide audio data from a sound file as NumPy array.
 
     By default, the whole file is read from the beginning, but the
@@ -436,7 +432,7 @@ def write(file: FileDescriptorOrPath, data: AudioData, samplerate: int,
 def blocks(file: FileDescriptorOrPath, blocksize: int | None = None, overlap: int = 0,
         frames: int = -1, start: int = 0, stop: int | None = None, dtype: dtype_str = 'float64',
         always_2d: bool = False, fill_value: float | None = None,
-        *, out: _ndarrayT, **kwargs: Unpack[_kwargs_read_blocks]) -> Generator[_ndarrayT]: ...
+        *, out: AudioData[_dtypeT], **kwargs: Unpack[_kwargs_read_blocks]) -> Generator[AudioData[_dtypeT]]: ...
 @overload
 def blocks(file: FileDescriptorOrPath, blocksize: int | None = None, overlap: int = 0,
         frames: int = -1, start: int = 0, stop: int | None = None,
@@ -446,7 +442,7 @@ def blocks(file: FileDescriptorOrPath, blocksize: int | None = None, overlap: in
 def blocks(file: FileDescriptorOrPath, blocksize: int | None = None, overlap: int = 0,
         frames: int = -1, start: int = 0, stop: int | None = None,
         *, dtype: Literal['float32'], always_2d: bool = False, fill_value: float | None = None,
-        out: None = None, **kwargs: Unpack[_kwargs_read_blocks]) -> Generator[_NDArray[float32]]: ...
+        out: None = None, **kwargs: Unpack[_kwargs_read_blocks]) -> Generator[AudioData[float32]]: ...
 @overload
 def blocks(file: FileDescriptorOrPath, blocksize: int | None = None, overlap: int = 0,
         frames: int = -1, start: int = 0, stop: int | None = None,
@@ -457,7 +453,7 @@ def blocks(file: FileDescriptorOrPath, blocksize: int | None = None, overlap: in
         frames: int = -1, start: int = 0, stop: int | None = None,
         dtype: Literal['float64'] = 'float64', always_2d: bool = False, fill_value: float | None = None, out: None = None,
         samplerate: int | None = None, channels: int | None = None, format: str | None = None, subtype: str | None = None,
-        endian: str | None = None, closefd: bool = True) -> Generator[_NDArray[float64]]: ...
+        endian: str | None = None, closefd: bool = True) -> Generator[AudioData[float64]]: ...
 @overload
 def blocks(file: FileDescriptorOrPath, blocksize: int | None = None, overlap: int = 0,
         frames: int = -1, start: int = 0, stop: int | None = None,
@@ -467,7 +463,7 @@ def blocks(file: FileDescriptorOrPath, blocksize: int | None = None, overlap: in
 def blocks(file: FileDescriptorOrPath, blocksize: int | None = None, overlap: int = 0,
         frames: int = -1, start: int = 0, stop: int | None = None,
         *, dtype: Literal['int16'], always_2d: bool = False, fill_value: float | None = None,
-        out: None = None, **kwargs: Unpack[_kwargs_read_blocks]) -> Generator[_NDArray[int16]]: ...
+        out: None = None, **kwargs: Unpack[_kwargs_read_blocks]) -> Generator[AudioData[int16]]: ...
 @overload
 def blocks(file: FileDescriptorOrPath, blocksize: int | None = None, overlap: int = 0,
         frames: int = -1, start: int = 0, stop: int | None = None,
@@ -477,15 +473,15 @@ def blocks(file: FileDescriptorOrPath, blocksize: int | None = None, overlap: in
 def blocks(file: FileDescriptorOrPath, blocksize: int | None = None, overlap: int = 0,
         frames: int = -1, start: int = 0, stop: int | None = None,
         *, dtype: Literal['int32'], always_2d: bool = False, fill_value: float | None = None,
-        out: None = None, **kwargs: Unpack[_kwargs_read_blocks]) -> Generator[_NDArray[int32]]: ...
+        out: None = None, **kwargs: Unpack[_kwargs_read_blocks]) -> Generator[AudioData[int32]]: ...
 def blocks(file: FileDescriptorOrPath, blocksize: int | None = None,
            overlap: int = 0, frames: int = -1, start: int = 0,
            stop: int | None = None, dtype: dtype_str = 'float64',
            always_2d: bool = False, fill_value: float | None = None,
-           out: _ndarrayT | None = None, samplerate: int | None = None,
+           out: AudioData[Any] | None = None, samplerate: int | None = None,
            channels: int | None = None, format: str | None = None,
            subtype: str | None = None, endian: str | None = None,
-           closefd: bool = True) -> Generator[AudioData] | Generator[AudioData_2d] | Generator[_ndarrayT]:
+           closefd: bool = True) -> Generator[AudioData[Any]]:
     """Return a generator for block-wise reading.
 
     By default, iteration starts at the beginning and stops at the end
@@ -974,34 +970,34 @@ class SoundFile:
 
     @overload
     def read(self, frames: int = -1, dtype: dtype_str = 'float64', always_2d: bool = False, fill_value: float | None = None,
-            *, out: _ndarrayT) -> _ndarrayT: ...
+            *, out: AudioData[_dtypeT]) -> AudioData[_dtypeT]: ...
     @overload
     def read(self, frames: int = -1, *, dtype: Literal['float32'], always_2d: Literal[True],
 			fill_value: float | None = None, out: None = None) -> AudioData_2d[float32]: ...
     @overload
     def read(self, frames: int = -1, *, dtype: Literal['float32'], always_2d: bool = False,
-			fill_value: float | None = None, out: None = None) -> _NDArray[float32]: ...
+			fill_value: float | None = None, out: None = None) -> AudioData[float32]: ...
     @overload
     def read(self, frames: int = -1, dtype: Literal['float64'] = 'float64', *, always_2d: Literal[True],
 			fill_value: float | None = None, out: None = None) -> AudioData_2d[float64]: ...
     @overload
     def read(self, frames: int = -1, dtype: Literal['float64'] = 'float64', always_2d: bool = False,
-			fill_value: float | None = None, out: None = None) -> _NDArray[float64]: ...
+			fill_value: float | None = None, out: None = None) -> AudioData[float64]: ...
     @overload
     def read(self, frames: int = -1, *, dtype: Literal['int16'], always_2d: Literal[True],
 			fill_value: float | None = None, out: None = None) -> AudioData_2d[int16]: ...
     @overload
     def read(self, frames: int = -1, *, dtype: Literal['int16'], always_2d: bool = False,
-            fill_value: float | None = None, out: None = None) -> _NDArray[int16]: ...
+            fill_value: float | None = None, out: None = None) -> AudioData[int16]: ...
     @overload
     def read(self, frames: int = -1, *, dtype: Literal['int32'], always_2d: Literal[True],
 			fill_value: float | None = None, out: None = None) -> AudioData_2d[int32]: ...
     @overload
     def read(self, frames: int = -1, *, dtype: Literal['int32'], always_2d: bool = False,
-			fill_value: float | None = None, out: None = None) -> _NDArray[int32]: ...
+			fill_value: float | None = None, out: None = None) -> AudioData[int32]: ...
     def read(self, frames: int = -1, dtype: dtype_str = 'float64',
             always_2d: bool = False, fill_value: float | None = None,
-            out: _ndarrayT | None = None) -> AudioData | AudioData_2d | _ndarrayT:
+            out: AudioData[Any] | None = None) -> AudioData[Any]:
         """Read from the file and return data as NumPy array.
 
         Reads the given number of frames in the given data format
@@ -1246,35 +1242,35 @@ class SoundFile:
 
     @overload
     def blocks(self, blocksize: int | None = None, overlap: int = 0, frames: int = -1, dtype: dtype_str = 'float64',
-            always_2d: bool = False, fill_value: float | None = None, *, out: _ndarrayT) -> Generator[_ndarrayT]: ...
+            always_2d: bool = False, fill_value: float | None = None, *, out: AudioData[_dtypeT]) -> Generator[AudioData[_dtypeT]]: ...
     @overload
     def blocks(self, blocksize: int | None = None, overlap: int = 0, frames: int = -1, *, dtype: Literal['float32'],
             always_2d: Literal[True], fill_value: float | None = None, out: None = None) -> Generator[AudioData_2d[float32]]: ...
     @overload
     def blocks(self, blocksize: int | None = None, overlap: int = 0, frames: int = -1, *, dtype: Literal['float32'],
-            always_2d: bool = False, fill_value: float | None = None, out: None = None) -> Generator[_NDArray[float32]]: ...
+            always_2d: bool = False, fill_value: float | None = None, out: None = None) -> Generator[AudioData[float32]]: ...
     @overload
     def blocks(self, blocksize: int | None = None, overlap: int = 0, frames: int = -1, dtype: Literal['float64'] = 'float64',
             *, always_2d: Literal[True], fill_value: float | None = None, out: None = None) -> Generator[AudioData_2d[float64]]: ...
     @overload
     def blocks(self, blocksize: int | None = None, overlap: int = 0, frames: int = -1, dtype: Literal['float64'] = 'float64',
-            always_2d: bool = False, fill_value: float | None = None, out: None = None) -> Generator[_NDArray[float64]]: ...
+            always_2d: bool = False, fill_value: float | None = None, out: None = None) -> Generator[AudioData[float64]]: ...
     @overload
     def blocks(self, blocksize: int | None = None, overlap: int = 0, frames: int = -1, *, dtype: Literal['int16'],
             always_2d: Literal[True], fill_value: float | None = None, out: None = None) -> Generator[AudioData_2d[int16]]: ...
     @overload
     def blocks(self, blocksize: int | None = None, overlap: int = 0, frames: int = -1, *, dtype: Literal['int16'],
-            always_2d: bool = False, fill_value: float | None = None, out: None = None) -> Generator[_NDArray[int16]]: ...
+            always_2d: bool = False, fill_value: float | None = None, out: None = None) -> Generator[AudioData[int16]]: ...
     @overload
     def blocks(self, blocksize: int | None = None, overlap: int = 0, frames: int = -1, *, dtype: Literal['int32'],
             always_2d: Literal[True], fill_value: float | None = None, out: None = None) -> Generator[AudioData_2d[int32]]: ...
     @overload
     def blocks(self, blocksize: int | None = None, overlap: int = 0, frames: int = -1, *, dtype: Literal['int32'],
-            always_2d: bool = False, fill_value: float | None = None, out: None = None) -> Generator[_NDArray[int32]]: ...
+            always_2d: bool = False, fill_value: float | None = None, out: None = None) -> Generator[AudioData[int32]]: ...
     def blocks(self, blocksize: int | None = None, overlap: int = 0,
                frames: int = -1, dtype: dtype_str = 'float64',
                always_2d: bool = False, fill_value: float | None = None,
-               out: _ndarrayT | None = None) -> Generator[AudioData] | Generator[AudioData_2d] | Generator[_ndarrayT]:
+               out: AudioData[Any] | None = None) -> Generator[AudioData[Any]]:
         """Return a generator for block-wise reading.
 
         By default, the generator yields blocks of the given
@@ -1548,13 +1544,13 @@ class SoundFile:
             raise ValueError("Data size must be a multiple of frame size")
         return data, frames
 
-    def _create_empty_array(self, frames, always_2d, dtype):
+    def _create_empty_array(self, frames: int, always_2d: bool, dtype: dtype_str):
         """Create an empty array with appropriate shape."""
         import numpy as np
         if always_2d or self.channels > 1:
-            shape = frames, self.channels
+            shape = (frames, self.channels)
         else:
-            shape = frames,
+            shape = (frames,)
         return np.empty(shape, dtype, order='C')
 
     def _check_dtype(self, dtype):
